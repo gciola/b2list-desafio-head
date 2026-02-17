@@ -11,21 +11,24 @@ services:
     environment:
       - N8N_USER_ID=0
       - N8N_GROUP_ID=0
-      - N8N_BLOCK_XML_EXTERNAL_ENTITIES=true
-      - N8N_BASIC_AUTH_ACTIVE=true
-      - N8N_HOST=localhost
-      - N8N_PORT=5678
-      - N8N_PROTOCOL=http
       
-      # Variáveis para o Python encontrar o Pandas instalado no build
-      - PYTHONPATH=/usr/local/lib/python3.11/site-packages
+      # Persistência de Banco (Lendo do .env)
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=${DB_POSTGRESDB_HOST}
+      - DB_POSTGRESDB_PORT=${DB_POSTGRESDB_PORT}
+      - DB_POSTGRESDB_DATABASE=${DB_POSTGRESDB_DATABASE}
+      - DB_POSTGRESDB_USER=${DB_POSTGRESDB_USER}
+      - DB_POSTGRESDB_PASSWORD=${DB_POSTGRESDB_PASSWORD}
+      - DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED=false
       
-      # AWS e Supabase Credentials
+      # Segurança e DNS
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - NODE_OPTIONS=--dns-result-order=ipv4first
+      
+      # S3 / AWS
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-sa-east-1}
-      - SUPABASE_S3_ENDPOINT=${SUPABASE_S3_ENDPOINT}
-      
+      - SUPABASE_S3_ENDPOINT=${SUPABASE_S3_ENDPOINT}      
     volumes:
       - ./n8n_data:/root/.n8n
       - ./workflows:/root/workflows
@@ -33,3 +36,4 @@ services:
       - ./n8n_data_files:/root/data
       # Removido o compartilhamento do docker.sock para ser compatível com o Render
     user: "0:0"
+
