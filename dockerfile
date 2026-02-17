@@ -1,28 +1,31 @@
-# Usando a imagem oficial do n8n como base
-FROM docker.n8n.io/n8nio/n8n:2.7.5
+# Estágio 1: Base de Python estável
+FROM python:3.11-slim
 
 USER root
 
-# Tenta instalar usando APK (Alpine) ou APT (Debian) dinamicamente
-RUN if [ -f /sbin/apk ]; then \
-        apk add --no-cache curl python3 py3-pip docker-cli; \
-    else \
-        apt-get update && apt-get install -y --no-install-recommends curl python3 python3-pip docker.io && rm -rf /var/lib/apt/lists/*; \
-    fi 
+# Instalar dependências de sistema e Node.js (necessário para rodar o n8n)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    gnupg \
+    ca-certificates \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g n8n@2.7.5 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Instalar bibliotecas Python necessárias para o MatchAI
-# Usamos --break-system-packages para permitir instalação em ambientes gerenciados
-RUN pip install --no-cache-dir pandas boto3 --break-system-packages 
+# Instalar bibliotecas de dados para o MatchAI
+RUN pip install --no-cache-dir pandas boto3 awscli --break-system-packages
 
-# Copiar o script gerador diretamente para a imagem
-COPY generate_pharmacy.py /opt/generate_pharmacy.py 
-RUN chmod +x /opt/generate_pharmacy.py [cite: 6]
+# Configurar o script gerador
+WORKDIR /opt/pharmacy
+COPY generate_pharmacy.py .
+RUN chmod +x generate_pharmacy.py
 
-# Garantir que o Python e AWS CLI (via pip) estejam no PATH
-RUN pip install --no-cache-dir awscli --break-system-packages 
+# Criar pastas necessárias para o n8n
+RUN mkdir -p /root/.n8n /root/data
 
-# Variáveis de ambiente para persistência no Supabase (configurar no Render)
-ENV N8N_PORT=5678
-ENV PYTHONUNBUFFERED=1
+# Expor a porta do n8n
+EXPOSE 5678
 
-USER root
+# Comando de inicialização
+CMD ["n8n", "start"]
