@@ -13,11 +13,11 @@ services:
       - N8N_GROUP_ID=0
       - N8N_BLOCK_XML_EXTERNAL_ENTITIES=true
       - N8N_BASIC_AUTH_ACTIVE=true
-      - N8N_HOST=localhost
+      - N8N_HOST=b2list-desafio-head.onrender.com
       - N8N_PORT=5678
-      - N8N_PROTOCOL=http
+      - N8N_PROTOCOL=https
       - NODE_ENV=production
-      - WEBHOOK_URL=http://localhost:5678/
+      - WEBHOOK_URL=https://b2list-desafio-head.onrender.com:5678/
       - GENERIC_TIMEZONE=America/Sao_Paulo
       - NODE_OPTIONS=--max-old-space-size=512
       - EXECUTIONS_DATA_PRUNE=true
@@ -50,5 +50,6 @@ services:
       - ./n8n_data_files:/root/data
       # Removido o compartilhamento do docker.sock para ser compatível com o Render
     user: "0:0"
+
 
 
