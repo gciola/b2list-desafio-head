@@ -1,33 +1,35 @@
 services:
   n8n:
-    build: .
+    build: . # Usa o novo Dockerfile multi-stage único
     image: b2list-n8n-consolidated
     container_name: n8n-main
     restart: always
     ports:
       - "5678:5678"
-    env_file: .env
+    env_file:
+      - .env
     environment:
       - N8N_USER_ID=0
       - N8N_GROUP_ID=0
+      - N8N_BLOCK_XML_EXTERNAL_ENTITIES=true
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      
+      # Variáveis para o Python encontrar o Pandas instalado no build
+      - PYTHONPATH=/usr/local/lib/python3.11/site-packages
+      
+      # AWS e Supabase Credentials
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-sa-east-1}
       - SUPABASE_S3_ENDPOINT=${SUPABASE_S3_ENDPOINT}
+      
     volumes:
       - ./n8n_data:/root/.n8n
       - ./workflows:/root/workflows
       - ./aws_config:/root/.aws
-      - /var/run/docker.sock:/var/run/docker.sock # Essencial para o n8n comandar containers
+      - ./n8n_data_files:/root/data
+      # Removido o compartilhamento do docker.sock para ser compatível com o Render
     user: "0:0"
-
-  pharmacy-generator:
-    image: b2list-n8n-consolidated # Usa a mesma imagem buildada acima
-    container_name: pharmacy-generator
-    command: python3 /opt/pharmacy/generate_pharmacy.py
-    env_file: .env
-    profiles:
-      - manual
-    deploy:
-      resources:
-        limits:
-          memory: 512M
