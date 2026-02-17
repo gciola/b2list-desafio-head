@@ -27,5 +27,11 @@ RUN mkdir -p /root/.n8n /root/data
 # Expor a porta do n8n
 EXPOSE 5678
 
+# Força a liberação do nó de execução de comandos no ambiente de produção
+ENV N8N_BLOCK_SVC_COMMAND_EXECUTION=false
+ENV N8N_NODES_INCLUDE="n8n-nodes-base.executeCommand"
+ENV NODES_EXCLUDE=[]
+
 # Comando de inicialização
 CMD ["n8n", "start"]
+
