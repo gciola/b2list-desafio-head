@@ -28,7 +28,9 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-sa-east-1}
       - SUPABASE_S3_ENDPOINT=${SUPABASE_S3_ENDPOINT}
-      - NODES_EXCLUDE=[]      # Persistência de Banco (Lendo do .env)
+      - NODES_EXCLUDE=[]      
+      
+      # Persistência de Banco (Lendo do .env)
       
       # n8n supabase postgres
       - DB_TYPE=postgresdb
@@ -50,6 +52,7 @@ services:
       - ./n8n_data_files:/root/data
       # Removido o compartilhamento do docker.sock para ser compatível com o Render
     user: "0:0"
+
 
 
 
