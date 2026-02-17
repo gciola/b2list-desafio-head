@@ -1,31 +1,28 @@
-# ESTÁGIO 1: Builder para coletar o AWS CLI (evita levar compiladores para a imagem final)
-FROM python:3.11-slim AS builder
-RUN pip install --no-cache-dir awscli
-
-# ESTÁGIO 2: Preparação do Gerador (Pandas + Boto3)
-FROM python:3.11-slim AS pharmacy-env
-WORKDIR /app
-RUN pip install --no-cache-dir pandas boto3
-COPY generate_pharmacy.py .
-
-# ESTÁGIO 3: Imagem Final n8n (Debian-based)
+# Usando a imagem oficial do n8n como base
 FROM docker.n8n.io/n8nio/n8n:2.7.5
+
 USER root
 
-# Ajuste para Debian: usa-se apt-get em vez de apk
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    docker.io \
-    && rm -rf /var/lib/apt/lists/*
+# Tenta instalar usando APK (Alpine) ou APT (Debian) dinamicamente
+RUN if [ -f /sbin/apk ]; then \
+        apk add --no-cache curl python3 py3-pip docker-cli; \
+    else \
+        apt-get update && apt-get install -y --no-install-recommends curl python3 python3-pip docker.io && rm -rf /var/lib/apt/lists/*; \
+    fi 
 
-# Trazendo o AWS CLI e Gerador conforme estágios anteriores
-COPY --from=builder /usr/local/bin/aws /usr/local/bin/aws
-COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
-COPY --from=pharmacy-env /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
-COPY --from=pharmacy-env /app/generate_pharmacy.py /opt/generate_pharmacy.py
+# Instalar bibliotecas Python necessárias para o MatchAI
+# Usamos --break-system-packages para permitir instalação em ambientes gerenciados
+RUN pip install --no-cache-dir pandas boto3 --break-system-packages 
 
-ENV PYTHONPATH=/usr/local/lib/python3.11/site-packages
-ENV PATH="/usr/local/bin:$PATH"
+# Copiar o script gerador diretamente para a imagem
+COPY generate_pharmacy.py /opt/generate_pharmacy.py 
+RUN chmod +x /opt/generate_pharmacy.py [cite: 6]
 
-RUN mkdir -p /root/.n8n /root/.aws /root/data && chmod -R 777 /root/data
+# Garantir que o Python e AWS CLI (via pip) estejam no PATH
+RUN pip install --no-cache-dir awscli --break-system-packages 
+
+# Variáveis de ambiente para persistência no Supabase (configurar no Render)
+ENV N8N_PORT=5678
+ENV PYTHONUNBUFFERED=1
+
 USER root
