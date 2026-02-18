@@ -19,7 +19,7 @@ services:
       - NODE_ENV=production
       - WEBHOOK_URL=https://b2list-desafio-head.onrender.com:5678/
       - GENERIC_TIMEZONE=America/Sao_Paulo
-      - NODE_OPTIONS=--max-old-space-size=512
+      - N8N_RUNNERS_ENABLED=false
       - EXECUTIONS_DATA_PRUNE=true
       - EXECUTIONS_DATA_MAX_AGE=168
       - N8N_BLOCK_SVC_COMMAND_EXECUTION=false
@@ -40,7 +40,7 @@ services:
       - DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED=false
       # Segurança e DNS
       - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
-      - NODE_OPTIONS=--dns-result-order=ipv4first
+      - NODE_OPTIONS=--max-old-space-size=512 --dns-result-order=ipv4first
     volumes:
       - ./n8n_data:/root/.n8n
       - ./workflows:/root/workflows
@@ -48,6 +48,7 @@ services:
       - ./n8n_data_files:/root/data
       # Removido o compartilhamento do docker.sock para ser compatível com o Render
     user: "0:0"
+
 
 
 
