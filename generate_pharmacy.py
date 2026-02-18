@@ -77,11 +77,19 @@ def main():
         )
         
         print(f"[{datetime.now()}] Sucesso: pharmacy.csv gerado com {len(final)} linhas.")
+        
+        # 8 - Limpa variaveis e flush de memoria 
+        del pharmacy
+        del final
+        gc.collect()
+        # Fim do cleanup
+        
         return {'status': 'success', 'rows': len(final)}
-
+       
     except Exception as e:
         print(f"!!! ERRO FATAL: {str(e)}")
         raise e
 
 if __name__ == '__main__':
     main()
+
