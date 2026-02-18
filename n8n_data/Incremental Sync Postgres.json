@@ -1,0 +1,798 @@
+{
+  "name": "Incremental Sync Postgres",
+  "nodes": [
+    {
+      "parameters": {
+        "bucketName": "b2list",
+        "fileKey": "={{ $json.filename }}"
+      },
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        272
+      ],
+      "id": "0e44187b-3fce-4e87-b46c-4e65116c1de1",
+      "name": "Download a file",
+      "credentials": {
+        "s3": {
+          "id": "AqYjsOYqqiU8SpRT",
+          "name": "Supabase \"S3 compatible\" Storage"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "delimiter": ";"
+        }
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        80,
+        272
+      ],
+      "id": "564926f8-0736-47fb-88b2-b64cf5f927fc",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "pharmacy",
+        "limit": 5000
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        80,
+        464
+      ],
+      "id": "1e13688d-dc72-4f9c-b36c-bf1a3389a3f8",
+      "name": "Get many rows",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "byfRckrVCQipQVr5",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "code_pharmacy",
+        "joinMode": "keepEverything",
+        "options": {
+          "clashHandling": {
+            "values": {
+              "resolveClash": "addSuffix"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        304,
+        368
+      ],
+      "id": "ea7be19c-7388-4cd5-a299-8b3b070ff39d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ !!($json.id_2 && $json.code_pharmacy_1) }}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "31eefce7-c096-4956-a283-c985907251ff"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "UPDATE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3e572659-4b2f-4d47-9a57-e1bedffefe6d",
+                    "leftValue": "={{ $json.id_2 }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "number",
+                      "operation": "notExists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "INSERT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2bec3a2d-ac30-4317-922d-bd92ed84ee08",
+                    "leftValue": "={{ !!$json.id_2 && $json.code_pharmacy_1 === undefined }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "DELETE"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        528,
+        352
+      ],
+      "id": "31d71f81-ae7e-467f-b106-d8f7b1a33970",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "20866d51-d7d8-409b-b9ed-d3529cf64379",
+              "name": "id",
+              "value": "={{ $json.id_2 }}",
+              "type": "number"
+            },
+            {
+              "id": "8af88572-e198-4e7f-b360-569689985558",
+              "name": "code_pharmacy",
+              "value": "={{ $json.code_pharmacy_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "83965c21-0380-4d39-9e68-6484ab79cfac",
+              "name": "nit",
+              "value": "={{ $json.nit_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "025cda14-0da1-46ba-936d-a66bc9bb4c48",
+              "name": "trade_name",
+              "value": "={{ $json.trade_name_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "b604e893-15e9-4261-a8b4-18aa24535cd8",
+              "name": "corporate_name",
+              "value": "={{ $json.corporate_name_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "2649ec66-6c5b-4087-b789-606c6365be44",
+              "name": "lat",
+              "value": "={{ $json.lat_1.replaceAll(\",\",\".\") }}",
+              "type": "string"
+            },
+            {
+              "id": "c4534ab7-84e5-4894-bcc8-1bd37ab69f18",
+              "name": "lon",
+              "value": "={{ $json.lon_1.replaceAll(\",\",\".\") }}",
+              "type": "string"
+            },
+            {
+              "id": "1f6a8f23-36ca-4b21-b184-a6a84d82b48b",
+              "name": "category",
+              "value": "={{ $json.category_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "625d07ca-3303-4443-a215-4e47558a57cf",
+              "name": "enabled",
+              "value": "={{ $json.enabled_1 }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        752,
+        -112
+      ],
+      "id": "003d64dc-af4b-4980-92bd-5e2f139e8d4f",
+      "name": "Prepare Payload UPDATE"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8af88572-e198-4e7f-b360-569689985558",
+              "name": "code_pharmacy",
+              "value": "={{ $json.code_pharmacy_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "83965c21-0380-4d39-9e68-6484ab79cfac",
+              "name": "nit",
+              "value": "={{ $json.nit_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "025cda14-0da1-46ba-936d-a66bc9bb4c48",
+              "name": "trade_name",
+              "value": "={{ $json.trade_name_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "b604e893-15e9-4261-a8b4-18aa24535cd8",
+              "name": "corporate_name",
+              "value": "={{ $json.corporate_name_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "2649ec66-6c5b-4087-b789-606c6365be44",
+              "name": "lat",
+              "value": "={{ $json.lat_1.replaceAll(\",\",\".\") }}",
+              "type": "string"
+            },
+            {
+              "id": "c4534ab7-84e5-4894-bcc8-1bd37ab69f18",
+              "name": "lon",
+              "value": "={{ $json.lon_1.replaceAll(\",\",\".\") }}",
+              "type": "string"
+            },
+            {
+              "id": "1f6a8f23-36ca-4b21-b184-a6a84d82b48b",
+              "name": "category",
+              "value": "={{ $json.category_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "625d07ca-3303-4443-a215-4e47558a57cf",
+              "name": "enabled",
+              "value": "={{ $json.enabled_1 }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        752,
+        368
+      ],
+      "id": "dbc4bb5d-9b7f-44f3-93e5-703ef8b66a26",
+      "name": "Prepare Payload INSERT"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "batch_data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        336
+      ],
+      "id": "671d41df-f577-4346-89ed-6071b7536340",
+      "name": "Aggregate in 500 batches - INSERT"
+    },
+    {
+      "parameters": {
+        "batchSize": 500,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        992,
+        176
+      ],
+      "id": "739ecc45-e696-400b-ada2-78ec4bb19bc7",
+      "name": "Loop on 500 Batch - INSERT"
+    },
+    {
+      "parameters": {
+        "batchSize": 500,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1008,
+        -288
+      ],
+      "id": "9c593b7e-90af-45ae-afa6-28c8465a8543",
+      "name": "Loop on 500 Batch - UPDATE"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "batch_data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        -144
+      ],
+      "id": "2e3d3b37-61bf-4484-8353-1f21642942a7",
+      "name": "Aggregate in 500 batches - UPDATE"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://wwvhaxdtnqdayxmbxrjq.supabase.co/rest/v1/pharmacy",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.batch_data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1424,
+        336
+      ],
+      "id": "4bf70581-644c-4a15-aefc-348c86e0301b",
+      "name": "Insert into pharmacy",
+      "executeOnce": false,
+      "credentials": {
+        "supabaseApi": {
+          "id": "byfRckrVCQipQVr5",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "20866d51-d7d8-409b-b9ed-d3529cf64379",
+              "name": "id",
+              "value": "={{ $json.id_2 }}",
+              "type": "number"
+            },
+            {
+              "id": "cda09fc0-b2c2-4dd7-9183-736e50e62efa",
+              "name": "code_pharmacy",
+              "value": "={{ $json.code_pharmacy_2 }}",
+              "type": "string"
+            },
+            {
+              "id": "625d07ca-3303-4443-a215-4e47558a57cf",
+              "name": "enabled",
+              "value": "=false",
+              "type": "boolean"
+            },
+            {
+              "id": "b6862410-35c6-4051-b52d-f085fee9f236",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        752,
+        848
+      ],
+      "id": "300ac6cc-0c17-4eab-8ad6-1bfa35f3520f",
+      "name": "Prepare Payload SOFT DELETE"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://wwvhaxdtnqdayxmbxrjq.supabase.co/rest/v1/rpc/update_pharmacy_batch",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"payload\": {{ JSON.stringify($json.batch_data) }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1424,
+        816
+      ],
+      "id": "32288df8-e4b0-4d6a-9bc7-dc1752f78701",
+      "name": "Soft Delete Matching Codes",
+      "credentials": {
+        "supabaseApi": {
+          "id": "byfRckrVCQipQVr5",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://wwvhaxdtnqdayxmbxrjq.supabase.co/rest/v1/rpc/update_pharmacy_batch",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"payload\": {{ JSON.stringify($json.batch_data) }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1424,
+        -144
+      ],
+      "id": "a03b788a-19bb-402f-ae92-60f6328b1d92",
+      "name": "Update Matching Codes",
+      "credentials": {
+        "supabaseApi": {
+          "id": "byfRckrVCQipQVr5",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "batch_data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        816
+      ],
+      "id": "adcd4d54-ddcb-4072-bfc3-093af75a4b20",
+      "name": "Aggregate in 500 batches - SOFT DELETE"
+    },
+    {
+      "parameters": {
+        "batchSize": 500,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        992,
+        656
+      ],
+      "id": "fb6fe17c-4d07-41f2-bdad-64cad580a998",
+      "name": "Loop on 500 Batch - SOFT DELETE"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "filename"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -368,
+        368
+      ],
+      "id": "8a678bdc-bd2f-4c22-8018-82e4b5b71a2e",
+      "name": "When Executed by Another Workflow"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "filename": "pharmacy-excluded.csv"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Download a file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Prepare Payload UPDATE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Payload INSERT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Payload SOFT DELETE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Payload UPDATE": {
+      "main": [
+        [
+          {
+            "node": "Loop on 500 Batch - UPDATE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Payload INSERT": {
+      "main": [
+        [
+          {
+            "node": "Loop on 500 Batch - INSERT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate in 500 batches - INSERT": {
+      "main": [
+        [
+          {
+            "node": "Insert into pharmacy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop on 500 Batch - INSERT": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Aggregate in 500 batches - INSERT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop on 500 Batch - UPDATE": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Aggregate in 500 batches - UPDATE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate in 500 batches - UPDATE": {
+      "main": [
+        [
+          {
+            "node": "Update Matching Codes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert into pharmacy": {
+      "main": [
+        [
+          {
+            "node": "Loop on 500 Batch - INSERT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Payload SOFT DELETE": {
+      "main": [
+        [
+          {
+            "node": "Loop on 500 Batch - SOFT DELETE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Soft Delete Matching Codes": {
+      "main": [
+        [
+          {
+            "node": "Loop on 500 Batch - SOFT DELETE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Matching Codes": {
+      "main": [
+        [
+          {
+            "node": "Loop on 500 Batch - UPDATE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate in 500 batches - SOFT DELETE": {
+      "main": [
+        [
+          {
+            "node": "Soft Delete Matching Codes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop on 500 Batch - SOFT DELETE": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Aggregate in 500 batches - SOFT DELETE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Download a file",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "America/Sao_Paulo",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "710ec1e1-52b7-445f-9e72-3f6992f1e402",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5dc44038a9eee860431a1f6cde80c3385ec8a2aedcb13a33f6aed62dc4a43533"
+  },
+  "id": "Iz8UZGCxY6Ycd4qD",
+  "tags": []
+}

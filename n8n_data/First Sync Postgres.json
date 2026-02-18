@@ -1,0 +1,348 @@
+{
+  "name": "First Sync Postgres",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "delimiter": ";"
+        }
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        80,
+        -80
+      ],
+      "id": "69f56e04-2e16-408e-b9f1-4ef57590bd9e",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        304,
+        16
+      ],
+      "id": "7f28be49-b315-485d-b3b7-f05aec9e574a",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8af88572-e198-4e7f-b360-569689985558",
+              "name": "code_pharmacy",
+              "value": "={{ $json.code_pharmacy }}",
+              "type": "string"
+            },
+            {
+              "id": "83965c21-0380-4d39-9e68-6484ab79cfac",
+              "name": "nit",
+              "value": "={{ $json.nit_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "025cda14-0da1-46ba-936d-a66bc9bb4c48",
+              "name": "trade_name",
+              "value": "={{ $json.trade_name }}",
+              "type": "string"
+            },
+            {
+              "id": "b604e893-15e9-4261-a8b4-18aa24535cd8",
+              "name": "corporate_name",
+              "value": "={{ $json.corporate_name_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "2649ec66-6c5b-4087-b789-606c6365be44",
+              "name": "lat",
+              "value": "={{ $json.lat.replaceAll(\",\",\".\") }}",
+              "type": "string"
+            },
+            {
+              "id": "c4534ab7-84e5-4894-bcc8-1bd37ab69f18",
+              "name": "lon",
+              "value": "={{ $json.lon.replaceAll(\",\",\".\") }}",
+              "type": "string"
+            },
+            {
+              "id": "1f6a8f23-36ca-4b21-b184-a6a84d82b48b",
+              "name": "category",
+              "value": "={{ $json.category }}",
+              "type": "string"
+            },
+            {
+              "id": "625d07ca-3303-4443-a215-4e47558a57cf",
+              "name": "enabled",
+              "value": "={{ $json.enabled }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        16
+      ],
+      "id": "6f1c4e28-fd59-46a3-871e-505abe58f8bc",
+      "name": "Prepare Payload INSERT"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "batch_data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        128
+      ],
+      "id": "fec84f51-7bdf-4022-856f-879cc3772bec",
+      "name": "Aggregate in 500 batches - INSERT"
+    },
+    {
+      "parameters": {
+        "batchSize": 500,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        880,
+        16
+      ],
+      "id": "c2ecc83d-b77a-436a-be05-564101090535",
+      "name": "Loop on 500 Batch - INSERT"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://wwvhaxdtnqdayxmbxrjq.supabase.co/rest/v1/pharmacy",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.batch_data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        128
+      ],
+      "id": "783c1cc8-5775-41af-bdb8-e4990bd9f045",
+      "name": "Insert into pharmacy",
+      "executeOnce": false,
+      "credentials": {
+        "supabaseApi": {
+          "id": "byfRckrVCQipQVr5",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://wwvhaxdtnqdayxmbxrjq.supabase.co/rest/v1/rpc/truncate_table_by_name",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"table_name\": \"pharmacy\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -16,
+        160
+      ],
+      "id": "8fab9263-2d3c-46ab-a241-22b648356832",
+      "name": "Truncate Pharmacy table",
+      "credentials": {
+        "supabaseApi": {
+          "id": "byfRckrVCQipQVr5",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "bucketName": "b2list",
+        "fileKey": "=pharmacy.csv"
+      },
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        -80
+      ],
+      "id": "dcd03311-f2ca-41a7-b96b-7fb40c68c194",
+      "name": "Download Pharmacy.csv from S3",
+      "credentials": {
+        "s3": {
+          "id": "AqYjsOYqqiU8SpRT",
+          "name": "Supabase \"S3 compatible\" Storage"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        16
+      ],
+      "id": "7338cd75-1010-4c87-93b7-858c78a5fff3",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Prepare Payload INSERT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Payload INSERT": {
+      "main": [
+        [
+          {
+            "node": "Loop on 500 Batch - INSERT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate in 500 batches - INSERT": {
+      "main": [
+        [
+          {
+            "node": "Insert into pharmacy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop on 500 Batch - INSERT": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Aggregate in 500 batches - INSERT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert into pharmacy": {
+      "main": [
+        [
+          {
+            "node": "Loop on 500 Batch - INSERT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Truncate Pharmacy table": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Download Pharmacy.csv from S3": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Download Pharmacy.csv from S3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Truncate Pharmacy table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "America/Sao_Paulo",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "a8f1ed62-1e44-4a90-a492-c45bbed63b7e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5dc44038a9eee860431a1f6cde80c3385ec8a2aedcb13a33f6aed62dc4a43533"
+  },
+  "id": "YjCsCuWZDbBsTDwv",
+  "tags": []
+}
