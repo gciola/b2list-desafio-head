@@ -23,6 +23,7 @@ services:
       - EXECUTIONS_DATA_PRUNE=true
       - EXECUTIONS_DATA_MAX_AGE=168
       - N8N_BLOCK_SVC_COMMAND_EXECUTION=false
+      - N8N_DISABLE_PRODUCTION_MAIN_PROCESS_CONTROL=true
       - NODES_EXCLUDE=[]
       # AWS credentials
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
@@ -48,6 +49,7 @@ services:
       - ./n8n_data_files:/root/data
       # Removido o compartilhamento do docker.sock para ser compatível com o Render
     user: "0:0"
+
 
 
 
