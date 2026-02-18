@@ -1,99 +1,77 @@
-# ---
+# **MatchAI: Pipeline de Consolidação de Dados de Farmácias**
 
-**MatchAI: Pipeline de Consolidação de Dados de Farmácias**
-
-Este repositório contém a solução completa para o pipeline de dados automatizado do desafio técnico **Head de Dados**. O ecossistema integra extração SFTP, processamento em Python, armazenamento S3 e sincronização incremental com PostgreSQL.
+Este repositório contém a solução completa para o pipeline de dados automatizado do desafio técnico **Head de Dados**. O sistema integra extração SFTP, processamento em Python, armazenamento S3 e sincronização incremental com PostgreSQL.
 
 ## **🚀 Arquitetura da Solução**
 
-O pipeline é composto por três workflows principais orquestrados no **n8n**, utilizando uma base de dados **Supabase** para persistência e **Python** para transformações complexas:
+O pipeline é orquestrado no **n8n** (hospedado no Render) e utiliza **Python 3.11** para transformações complexas. A persistência é realizada em uma instância **Supabase**, utilizando o motor PostgreSQL para dados relacionais e o Storage compatível com S3 para arquivos.
 
-1. **B2list S3 Files Flow:** Gerencia a ingestão de arquivos brutos do SFTP para o S3 e dispara a geração da base consolidada.
-
-2. **First Sync Postgres:** Realiza a carga inicial (bulk load) após o truncate da tabela.
-
-3. **Incremental Sync Postgres:** Mantém a base atualizada realizando operações de INSERT, UPDATE e SOFT DELETE em lote.
+\+2
 
 ## ---
 
-**🛠️ Configuração de Credenciais (n8n)**
+**🛠️ Configuração do Ambiente Supabase**
 
-Para o funcionamento correto dos fluxos, as seguintes credenciais devem ser configuradas no painel do n8n:
+Antes de iniciar o pipeline, é necessário preparar a infraestrutura no painel do Supabase:
 
-### **1\. Supabase "S3 compatible" Storage**
-
-Utilizada para interação com o bucket de arquivos CSV.
-
-* **Endpoint:** https://\[instancia\].storage.supabase.co/storage/v1/s3
-
-* **Region:** sa-east-1 (ou conforme seu projeto)
-
-* **S3 Force Path Style:** **True** (Obrigatório para compatibilidade com Supabase)  
-  \+2
-
-### **2\. Supabase API (PostgREST)**
-
-Utilizada para chamadas RPC e operações diretas na tabela via HTTP Request.
-
-* **URL:** https://\[instancia\].supabase.co
-
-* **API Key:** Sua service\_role key para bypass de RLS.
-
-### **3\. B2list SFTP Account**
-
-Utilizada para coleta dos arquivos Maestro.csv, Associados.csv e Terceros.csv.
-
-* **Host/Port:** Conforme definido no seu servidor de origem.
-
-## ---
-
-**📋 Procedimento de Instalação**
-
-### **1\. Preparação do Ambiente Local e Cloud**
-
-* **Arquivos .env:** Renomeie .env.example para .env e preencha todas as variáveis, especialmente as chaves de criptografia e credenciais de banco.
-
-* **Estrutura de Pastas:** Mantenha as pastas /n8n\_data, /aws\_config e /root/data conforme a estrutura do repositório para garantir o mapeamento correto dos volumes Docker.  
-  \+2
-
-### **2\. Configuração de Banco de Dados (Supabase)**
-
-1. **Conexão:** Utilize obrigatoriamente o **Transaction Pooler** (Porta 6543) para evitar exaustão de conexões no ambiente serverless.
-
-2. **Scripts SQL:** Execute o conteúdo de sql/postgres\_SQL\_setup.sql no SQL Editor do Supabase para criar as tabelas, índices e as funções RPC update\_pharmacy\_batch e truncate\_table\_by\_name.
-
-### **3\. Deploy no Render**
-
-1. Crie um novo **Web Service** apontando para este repositório.  
-2. Adicione todas as linhas do seu .env na seção **Environment Variables** do Render.  
+1. **Criação do Bucket:** Acesse a aba **Storage** e crie um novo bucket chamado exatamente b2list.  
    \+1
 
-3. Certifique-se de que a variável PORT está como 5678.
+2. **Configuração S3:** \* Acesse as configurações de **S3 Storage** no painel do Supabase.  
+   \+1
 
-4. Caso utilize outro serviço de hospedagem, lembre-se de atualizar a WEBHOOK\_URL.
+   * Gere uma **Access Key** e uma **Secret Key** válidas.
 
-## ---
+   * Salve estes valores no seu arquivo .env ou no painel do Render.
 
-**🔄 Fluxos do n8n**
-
-Os arquivos JSON para importação estão localizados na pasta n8n\_data na raiz do projeto.
-
-### **Ingestão e Geração (S3 Flow)**
-
-Este fluxo automatiza a coleta do SFTP e a execução do script Python generate\_pharmacy.py.
-
-### **Sincronização Incremental**
-
-Lógica avançada para identificar novos registros ou alterações, disparando a atualização em lotes de 500 itens para performance.
+3. **Massa de Teste (Opcional):** \* Para demonstrar a funcionalidade de **Soft Delete** do pipeline, insira manualmente um arquivo chamado pharmacy-excluded.csv no bucket.  
+   * Dica: Utilize uma cópia do pharmacy.csv removendo 5 linhas aleatórias; o sistema detectará a ausência e desativará os registros no banco.
 
 ## ---
 
-**⚙️ Notas Técnicas**
+**📋 Configuração do n8n**
 
-* **Python:** O script generate\_pharmacy.py substitui automaticamente o arquivo no destino e utiliza ; como separador para manter compatibilidade com os sistemas legados.
+### **1\. Variáveis Globais e Data Table do N8N**
 
-* **Bash/S3:** O workflow utiliza o AWS CLI v1 interno do container para transferir arquivos diretamente do sistema de arquivos para o S3, otimizando o uso de memória.
+Se você estiver migrando para uma **nova conta do Supabase**, é necessário atualizar a referência global:
 
----
+* Acesse o componente **Data Table** no n8n chamado SUPABASE\_URL.  
+  \+1
 
-**Desenvolvido para o desafio técnico Head de Dados \- Gilberto Ciola \-  2026\.**
+* Na coluna URL, substitua o valor existente pela nova URL do projeto (ex: https://xxxxxxxxxxx.supabase.co).  
+  \+1
+
+### **2\. Credenciais Críticas no N8N**
+
+Configure as seguintes credenciais no painel do n8n:
+
+* **Supabase "S3 compatible" Storage:** \* **Endpoint:** Sua URL do S3 Storage.
+
+  * **S3 Force Path Style:** **True** (Essencial para o funcionamento das chamadas).
+
+* **Supabase Account (API):** Utilize a service\_role key para permitir operações de RPC e Truncate.  
+* **B2List SFTP account:** Insira o host, a porta, o usuário e a senha conforme adicionado no .env.
+
+## ---
+
+**⚙️ Procedimento de Instalação (Render e Supabase)**
+
+1. **Variáveis de Ambiente:** Renomeie .env.example para .env e preencha as chaves. Copie estes valores para o painel de **Environment** do Render.
+
+2. **Scripts SQL:** Execute o conteúdo de /sql/postgres\_SQL\_setup.sql no SQL Editor do Supabase para criar a tabela pharmacy e as funções RPC de lote.
+
+3. **Segurança:** Certifique-se de que N8N\_BLOCK\_SVC\_COMMAND\_EXECUTION=false e N8N\_DISABLE\_PRODUCTION\_MAIN\_PROCESS\_CONTROL=true estão configurados para evitar travamentos na interface.
+
+## ---
+
+**🔄 Fluxos a Adicionar**
+
+Os JSONs do N8N para importação estão na pasta /n8n\_data:
+
+* **B2list S3 Files Flow:** Ingestão SFTP \-\> S3 \-\> Geração Python.  
+* **First Sync Postgres:** Carga inicial pós-truncate.  
+* **Incremental Sync Postgres:** Sync de INSERT/UPDATE/DELETE em lote.
+
+## ---
+
+**Desenvolvido para o desafio técnico Head de Dados \- 2026\.**
