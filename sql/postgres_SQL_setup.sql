@@ -1,0 +1,69 @@
+ALTER DATABASE postgres SET timezone TO 'America/Sao_Paulo';
+
+-------------------------
+-- TABLES
+-------------------------
+
+CREATE TABLE pharmacy (
+    id SERIAL PRIMARY KEY,
+    code_pharmacy VARCHAR(20) UNIQUE NOT NULL,
+    trade_name VARCHAR(255) NOT NULL,
+    category VARCHAR(20) NOT NULL,
+    corporate_name VARCHAR(255),
+    address VARCHAR(500) DEFAULT 'não informado',
+    nit VARCHAR(20),
+    lat DECIMAL(10, 6),
+    lon DECIMAL(10, 6),
+    enabled BOOLEAN DEFAULT false,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_pharmacy_code ON pharmacy(code_pharmacy);
+CREATE INDEX idx_pharmacy_category ON pharmacy(category);
+CREATE INDEX idx_pharmacy_enabled ON pharmacy(enabled);
+
+-------------------------
+-- FUNCTIONS
+-------------------------
+
+-- Update em lote json da tabela pharmacy. ID é obrigatório.
+
+CREATE OR REPLACE FUNCTION public.update_pharmacy_batch(payload jsonb) 
+RETURNS void
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  UPDATE public.pharmacy AS p
+  SET
+    trade_name = COALESCE(NULLIF(item->> 'trade_name',''), p.trade_name),
+    category = COALESCE(NULLIF(item->> 'category',''), p.category),
+    corporate_name = CASE WHEN item ? 'corporate_name' THEN item->> 'corporate_name' ELSE p.corporate_name END,
+    nit = CASE WHEN item ? 'nit' THEN item->> 'nit' ELSE p.nit END,
+    lat = CASE WHEN item ? 'lat' THEN (item->> 'lat')::numeric ELSE p.lat END,
+    lon = CASE WHEN item ? 'lon' THEN (item->> 'lon')::numeric ELSE p.lon END,
+    enabled = CASE WHEN item ? 'enabled' THEN (item->> 'enabled')::boolean ELSE p.enabled END,
+    last_modified = CURRENT_TIMESTAMP
+  FROM jsonb_array_elements(payload) AS item
+  WHERE p.id = (item->> 'id')::int; -- Ajustado para usar o campo 'id' do seu JSON
+END;
+$$;
+
+-- Forçar o recarregamento do cache da API
+NOTIFY pgrst, 'reload schema';
+
+-- Truncate table RPC com validação de tabelas em "whitelist"
+
+CREATE OR REPLACE FUNCTION public.truncate_table_by_name(table_name text)
+RETURNS void LANGUAGE plpgsql SECURITY DEFINER AS $$
+DECLARE
+  allowed_tables text[] := ARRAY['pharmacy']; -- add allowed tables here
+  t text := table_name;
+BEGIN
+  IF NOT (t = ANY(allowed_tables)) THEN
+    RAISE EXCEPTION 'table "%" is not allowed to be truncated', t;
+  END IF;
+
+  EXECUTE format('TRUNCATE TABLE public.%I RESTART IDENTITY CASCADE', t);
+END;
+$$;
