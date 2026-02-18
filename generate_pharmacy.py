@@ -1,19 +1,18 @@
 import pandas as pd
 import boto3
 import os
-import gc  # Import para gerenciamento de memória
+import gc
+import hashlib  # Biblioteca para gerar o checksum
 from io import StringIO
 from datetime import datetime
 
 def main():
-    # 1. Configurações de Ambiente e Conexão
+    # 1. Configurações de Ambiente e Conexão 
     endpoint = os.getenv('SUPABASE_S3_ENDPOINT')
     access_key = os.getenv('AWS_ACCESS_KEY_ID')
     secret_key = os.getenv('AWS_SECRET_ACCESS_KEY')
     region = os.getenv('AWS_DEFAULT_REGION', 'sa-east-1')
     bucket = "b2list"
-    
-    print(f"[{datetime.now()}] Iniciando consolidação MatchAI...")
     
     s3_client = boto3.client(
         's3', 
@@ -24,29 +23,25 @@ def main():
     )
     
     def get_df(key):
-        """Baixa do S3 e normaliza, otimizando tipos de dados para economizar RAM"""
-        print(f"  -> Baixando {key}...")
+        """Baixa do S3 e normaliza """
         obj = s3_client.get_object(Bucket=bucket, Key=key)
-        # Otimização: low_memory=False ajuda na performance de leitura
         df = pd.read_csv(obj['Body'], sep=';', low_memory=False)
         df.columns = df.columns.str.strip().str.upper()
         return df
     
     try:
-        # 2. Carregamento das Fontes (Consumo de RAM inicia aqui)
+        # 2. Carregamento e Processamento 
         df_maestro = get_df('Maestro.csv')
         df_associados = get_df('Associados.csv')
         df_terceros = get_df('Terceros.csv')
 
-        # 3. Joins
         pharmacy = df_maestro.merge(df_associados, on='ID', how='left', suffixes=('', '_ASSOC'))
         pharmacy = pharmacy.merge(df_terceros, on='ID', how='left', suffixes=('', '_TERC'))
         
-        # Limpeza imediata das tabelas de origem após o Merge
         del df_maestro, df_associados, df_terceros
         gc.collect()
 
-        # 4. Mapeamento de Campos
+        # 3. Mapeamento 
         pharmacy['trade_name'] = pharmacy['NOME_ASSOC'].fillna(pharmacy['NOME_TERC'])
         pharmacy['corporate_name'] = pharmacy['NOME_FANTASIA']
         pharmacy['nit'] = pharmacy['NIT']
@@ -64,17 +59,22 @@ def main():
         termos = r'Em dia|Ativo|Cadastro Ativo|Verificado|Vigente'
         pharmacy['enabled'] = observacao.str.contains(termos, case=False, na=False, regex=True)
         
-        # 5. Seleção Final
+        # 4. Exportação e Geração do Checksum 
         final = pharmacy[[
             'code_pharmacy', 'nit', 'trade_name', 'corporate_name', 
             'lat', 'lon', 'category', 'enabled'
         ]]
         
-        # 6. Exportação (Separador ; e Decimal ,)
         csv_buffer = StringIO()
-        final.to_csv(csv_buffer, index=False, sep=';', decimal=',')
+        csv_data = final.to_csv(index=False, sep=';', decimal=',')
+        csv_buffer.write(csv_data)
         
-        # 7. Upload para S3
+        # --- ADIÇÃO: Cálculo do MD5 do conteúdo gerado ---
+        md5_hash = hashlib.md5(csv_data.encode('utf-8')).hexdigest()
+        print(f"PYTHON_MD5_CHECK:¶{md5_hash}¶")
+        # -------------------------------------------------
+        
+        # 5. Upload 
         s3_client.put_object(
             Bucket=bucket, 
             Key='pharmacy.csv', 
@@ -82,19 +82,15 @@ def main():
             ContentType='text/csv'
         )
         
-        print(f"[{datetime.now()}] Sucesso: pharmacy.csv gerado com {len(final)} linhas.")
+        print(f"[{datetime.now()}] Sucesso: pharmacy.csv gerado.")
 
-        # --- GESTÃO AGRESSIVA DE MEMÓRIA ---
-        del pharmacy
-        del final
-        gc.collect()  # Força a liberação da RAM de volta para o SO
-        # -----------------------------------
+        del pharmacy, final
+        gc.collect()
 
-        return {'status': 'success'}
+        return {'status': 'success', 'md5': md5_hash}
 
     except Exception as e:
         print(f"!!! ERRO FATAL: {str(e)}")
-        # Garante limpeza mesmo em caso de erro
         gc.collect()
         raise e
 
