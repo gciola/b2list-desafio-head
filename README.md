@@ -46,18 +46,18 @@ Configure as seguintes credenciais no painel do n8n (N8N --> Credentials):
 ![alt text](https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/N8N_Credential_List.png "Lista de Credenciais")
 
 * **Supabase "S3 compatible" Storage:** \* **Endpoint:**
-  Tipo: S3
-  Descrição: Sua URL do S3 Storage.
-  Force Path Style:** **True** (Essencial para o funcionamento das chamadas).
+  - Tipo: S3
+  - Descrição: Sua URL do S3 Storage.
+  - Force Path Style:** **True** (Essencial para o funcionamento das chamadas).
 
 * **Supabase Account (API):** 
-  Tipo: Supabase Account
-  Descrição: Utilize a service\_role key para permitir operações de RPC e Truncate. (obtido em Supabase --> Menu --> Project Settings --> API Keys --> Aba "Legacy.." --> service_role) .    
+  - Tipo: Supabase Account
+  - Descrição: Utilize a service\_role key para permitir operações de RPC e Truncate. (obtido em Supabase --> Menu --> Project Settings --> API Keys --> Aba "Legacy.." --> service_role) .    
 
   
 * **B2List SFTP account:**
- Tipo: SFTP Account
- Descrição:  Insira o host, a porta, o usuário e a senha conforme adicionado no .env.
+ - Tipo: SFTP Account
+ - Descrição:  Insira o host, a porta, o usuário e a senha conforme adicionado no .env.
 
 ## ---
 
@@ -75,11 +75,11 @@ Configure as seguintes credenciais no painel do n8n (N8N --> Credentials):
 
 Os JSONs do N8N para importação estão na pasta /n8n\_data:
 
-* **B2list S3 Files Flow:** Ingestão SFTP \-\> S3 \-\> Geração Python.
+* **B2list S3 Files Flow:** Ingestão SFTP \-\> S3 \-\> Geração Python. [LINK JSON](https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/B2list%20S3%20Files%20flow.json).
 ![alt text](https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/N8N_B2list_S3_Files_Flow.png "B2list S3 Files Flow")
-* **First Sync Postgres:** Carga inicial pós-truncate.
+* **First Sync Postgres:** Carga inicial pós-truncate. [LINK JSON](https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/First%20Sync%20Postgres.json).
 ![alt text](https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/N8N_First_Sync_Flow.png "First Sync Flow")
-* **Incremental Sync Postgres:** Sync de INSERT/UPDATE/DELETE em lote.
+* **Incremental Sync Postgres:** Sync de INSERT/UPDATE/DELETE em lote. [LINK JSON](https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/Incremental%20Sync%20Postgres.json).
 ![alt text](https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/N8N_Incremental_Sync_Flow.png "Incremental Sync Flow")
 
 Para inserir os fluxos, crie um novo workflow no N8N e no menu de contexto selecione "Import from File", selecionando cada json em um novo workflow separadamente.
