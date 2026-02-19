@@ -94,7 +94,7 @@ Para inserir os fluxos, crie um novo workflow no N8N e no menu de contexto selec
 
 1. **Deploy no Render:** Aguarde a inicialização dos serviços e copie o endereço do n8n gerado nos logs
 
-2. **Acesso ao n8n:** Entre na URL ou acesse o ambiente já pronto para o desafio em [Link n8n no Render](https://b2list-desafio-head.onrender.com/). As credenciais serão passadas durante a apresentação 
+2. **Acesso ao n8n:** Entre na URL informada nos logs e utilize o user admin e senha gravados no env. Ou acesse o ambiente já pronto para o desafio em [Link n8n no Render](https://b2list-desafio-head.onrender.com/). As credenciais serão passadas durante a apresentação.
 
 3. **Start do fluxo:** Em "Workflows", acesse o fluxo **B2list S3 Files Flow:** e clique em "Execute Workflows".
 
