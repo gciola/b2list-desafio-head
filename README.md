@@ -6,7 +6,6 @@ Este repositório contém a solução completa para o pipeline de dados automati
 
 O pipeline é orquestrado no **n8n** (hospedado no Render) e utiliza **Python 3.11** para transformações complexas. A persistência é realizada em uma instância **Supabase**, utilizando o motor PostgreSQL para dados relacionais e o Storage compatível com S3 para arquivos.
 
-\+2
 
 ## ---
 
@@ -15,10 +14,10 @@ O pipeline é orquestrado no **n8n** (hospedado no Render) e utiliza **Python 3.
 Antes de iniciar o pipeline, é necessário preparar a infraestrutura no painel do Supabase:
 
 1. **Criação do Bucket:** Acesse a aba **Storage** e crie um novo bucket chamado exatamente b2list.  (Menu --> Storage --> Manage: Files --> New Bucket).  
-   \+1
+
 
 2. **Configuração S3:** \* Acesse as configurações de **S3 Storage** no painel do Supabase (Menu --> Storage --> Configuration: S3 --> New Access Key).  
-   \+1
+
 
    * Gere uma **Access Key** e uma **Secret Key** válidas.
 
@@ -35,11 +34,11 @@ Antes de iniciar o pipeline, é necessário preparar a infraestrutura no painel 
 
 Se você estiver migrando para uma **nova conta do Supabase**, é necessário atualizar a referência global:
 
-* Acesse o componente **Data Table** no n8n chamado SUPABASE\_URL.  
-  \+1
+* Acesse o componente **Data Table** no n8n, localizando a tabela "SUPABASE\_URL".
+![alt text](https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/datatable.png "Data Table")
 
-* Na coluna URL, substitua o valor existente pela nova URL do projeto (ex: https://xxxxxxxxxxx.supabase.co). Esta pode ser encontrada em  Menu --> Project Settings --> Data API --> API URL.    
-  \+1
+* Na coluna URL, substitua o valor existente pela nova URL do projeto (ex: https://xxxxxxxxxxx.supabase.co). Esta URL pode ser encontrada no Supabase em:  Menu --> Project Settings --> Data API --> API URL.    
+
 
 ### **2\. Credenciais Críticas no N8N**
 
@@ -95,5 +94,6 @@ Para inserir os fluxos, crie um novo workflow no N8N e no menu de contexto selec
 
 3. **Start do fluxo:** Em "Workflows", acesse o fluxo **B2list S3 Files Flow:** e clique em "Execute Workflows".
 
+## ---
 
 **Desenvolvido para o desafio técnico Head de Dados \- Gilberto Ciola \- 2026\.**
