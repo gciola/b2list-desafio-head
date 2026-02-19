@@ -11,7 +11,7 @@ O pipeline é orquestrado no **n8n** (hospedado no Render) e utiliza **Python 3.
 
 **🛠️ Configuração do Ambiente Supabase**
 
-Antes de iniciar o pipeline, é necessário preparar a infraestrutura no painel do Supabase:
+Antes de iniciar o pipeline, é necessário preparar a infraestrutura no painel do Supabase, caso deseje usar uma nova conta:
 
 1. **Criação do Bucket:** Acesse a aba **Storage** e crie um novo bucket chamado exatamente b2list.  (Menu --> Storage --> Manage: Files --> New Bucket).  
 
@@ -28,19 +28,9 @@ Antes de iniciar o pipeline, é necessário preparar a infraestrutura no painel 
 
 ## ---
 
-**📋 Configuração do ambiente**
+**📋 Configuração do ambiente n8n**
 
-### **1\. Variáveis Globais e Data Table do N8N**
-
-Se você estiver migrando para uma **nova conta do Supabase**, é necessário atualizar a referência global:
-
-* Acesse o n8n na aba**Data Table**, localizando a tabela "SUPABASE\_URL".
-![alt text](https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/datatable.png "Data Table")
-
-* Na coluna URL, substitua o valor existente pela nova URL do projeto (ex: https://xxxxxxxxxxx.supabase.co). Esta URL pode ser encontrada no Supabase em:  Menu --> Project Settings --> Data API --> API URL.    
- 
-
-### **2\. Procedimento de Instalação: Docker **
+### **1\. Procedimento de Instalação: Docker **
 
 **⚙️ Container principal e Supabase**
 
@@ -51,6 +41,17 @@ Se você estiver migrando para uma **nova conta do Supabase**, é necessário at
 3. **Scripts SQL:** No caso de uma nova conta do Supabase, execute o conteúdo da pasta /sql [LINK SCRIPTS](https://github.com/gciola/b2list-desafio-head/blob/main/sql/postgres_SQL_setup.sql) no SQL Editor do Supabase para criar as tabelas pharmacy, file_logs e as funções RPC de upsert em lote e truncate.
 
 4. **Segurança: Autorizar scripts em shell** Certifique-se de que N8N\_BLOCK\_SVC\_COMMAND\_EXECUTION=false e N8N\_DISABLE\_PRODUCTION\_MAIN\_PROCESS\_CONTROL=true estão configurados nas Variáveis de Ambiente para evitar travamentos na interface.
+
+## ---
+
+### **2\. Variáveis Globais e Data Table do N8N**
+
+Se você estiver migrando para uma **nova conta do Supabase**, é necessário atualizar a referência global:
+
+* Acesse o n8n na aba**Data Table**, localizando a tabela "SUPABASE\_URL".
+![alt text](https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/datatable.png "Data Table")
+
+* Na coluna URL, substitua o valor existente pela nova URL do projeto (ex: https://xxxxxxxxxxx.supabase.co). Esta URL pode ser encontrada no Supabase em:  Menu --> Project Settings --> Data API --> API URL. 
 
 ## ---
 
