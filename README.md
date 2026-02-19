@@ -54,10 +54,10 @@ Configure as seguintes credenciais no painel do n8n (N8N --> Credentials):
   - Tipo: Supabase Account
   - Descrição: Utilize a service\_role key para permitir operações de RPC e Truncate. (obtido em Supabase --> Menu --> Project Settings --> API Keys --> Aba "Legacy.." --> service_role) .    
 
-  
 * **B2List SFTP account:**
- - Tipo: SFTP Account
- - Descrição:  Insira o host, a porta, o usuário e a senha conforme adicionado no .env.
+  - Tipo: SFTP Account
+  - Descrição:  Insira o host, a porta, o usuário e a senha conforme adicionado no .env.
+  
 
 ## ---
 
