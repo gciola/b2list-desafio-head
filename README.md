@@ -81,7 +81,7 @@ Os JSONs do N8N para importação estão na pasta /n8n\_data:
 * **First Sync Postgres:** Carga inicial pós-truncate.
 ![alt text](https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/N8N_First_Sync_Flow.png "First Sync Flow")
 * **Incremental Sync Postgres:** Sync de INSERT/UPDATE/DELETE em lote.
-![alt text]([https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/N8N_Credential_List.png](https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/N8N_Incremental_Sync_Flow.png) "Incremental Sync Flow")
+![alt text](https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/N8N_Incremental_Sync_Flow.png "Incremental Sync Flow")
 
 Para inserir os fluxos, crie um novo workflow no N8N e no menu de contexto selecione "Import from File", selecionando cada json em um novo workflow separadamente.
 
