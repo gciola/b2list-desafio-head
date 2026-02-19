@@ -28,19 +28,33 @@ Antes de iniciar o pipeline, é necessário preparar a infraestrutura no painel 
 
 ## ---
 
-**📋 Configuração do n8n**
+**📋 Configuração do ambiente**
 
 ### **1\. Variáveis Globais e Data Table do N8N**
 
 Se você estiver migrando para uma **nova conta do Supabase**, é necessário atualizar a referência global:
 
-* Acesse o componente **Data Table** no n8n, localizando a tabela "SUPABASE\_URL".
+* Acesse o n8n na aba**Data Table**, localizando a tabela "SUPABASE\_URL".
 ![alt text](https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/datatable.png "Data Table")
 
 * Na coluna URL, substitua o valor existente pela nova URL do projeto (ex: https://xxxxxxxxxxx.supabase.co). Esta URL pode ser encontrada no Supabase em:  Menu --> Project Settings --> Data API --> API URL.    
+ 
 
+### **2\. Procedimento de Instalação: Docker **
 
-### **2\. Credenciais Críticas no N8N**
+**⚙️ Container principal e Supabase**
+
+1. **Dockerfile e docker-compose.yml:** Utilize o dockerfile e o docker-compose contidos no repositório para a preparação do ambiente em uma conta Render ou outra similar/interna.
+
+2. **Variáveis de Ambiente:** Renomeie .env.example para .env e preencha as chaves. Copie estes valores para o painel de **Environment** do Render.
+
+3. **Scripts SQL:** No caso de uma nova conta do Supabase, execute o conteúdo da pasta /sql [LINK SCRIPTS](https://github.com/gciola/b2list-desafio-head/blob/main/sql/postgres_SQL_setup.sql) no SQL Editor do Supabase para criar as tabelas pharmacy, file_logs e as funções RPC de upsert em lote e truncate.
+
+4. **Segurança: Autorizar scripts em shell** Certifique-se de que N8N\_BLOCK\_SVC\_COMMAND\_EXECUTION=false e N8N\_DISABLE\_PRODUCTION\_MAIN\_PROCESS\_CONTROL=true estão configurados nas Variáveis de Ambiente para evitar travamentos na interface.
+
+## ---
+
+### **3\. Credenciais Críticas no N8N**
 
 Configure as seguintes credenciais no painel do n8n (N8N --> Credentials):
 ![alt text](https://github.com/gciola/b2list-desafio-head/blob/main/n8n_data/N8N_Credential_List.png "Lista de Credenciais")
@@ -57,21 +71,8 @@ Configure as seguintes credenciais no painel do n8n (N8N --> Credentials):
 * **B2List SFTP account:**
   - Tipo: SFTP Account
   - Descrição:  Insira o host, a porta, o usuário e a senha conforme adicionado no .env.
-  
-
-## ---
-
-**⚙️ Procedimento de Instalação (Render e Supabase)**
-
-1. **Dockerfile e docker-compose.yml:** Utilize o dockerfile e o docker-compose contidos no repositório para a preparação do ambiente em uma conta Render ou outra similar/interna.
-
-2. **Variáveis de Ambiente:** Renomeie .env.example para .env e preencha as chaves. Copie estes valores para o painel de **Environment** do Render.
-
-3. **Scripts SQL:** No caso de uma nova conta do Supabase, execute o conteúdo da pasta /sql [LINK SCRIPTS](https://github.com/gciola/b2list-desafio-head/blob/main/sql/postgres_SQL_setup.sql) no SQL Editor do Supabase para criar as tabelas pharmacy, file_logs e as funções RPC de upsert em lote e truncate.
-
-4. **Segurança: Autorizar scripts em shell** Certifique-se de que N8N\_BLOCK\_SVC\_COMMAND\_EXECUTION=false e N8N\_DISABLE\_PRODUCTION\_MAIN\_PROCESS\_CONTROL=true estão configurados nas Variáveis de Ambiente para evitar travamentos na interface.
-
-## ---
+ 
+### **4\. Configurações de fluxo no N8N**
 
 **🔄 Fluxos a Adicionar no n8n**
 
@@ -88,7 +89,7 @@ Para inserir os fluxos, crie um novo workflow no N8N e no menu de contexto selec
 
 ## ---
 
-**✅ Inicialização e Uso**
+### **5\. Inicialização e Uso**
 
 1. **Deploy no Render:** Aguarde a inicialização dos serviços e copie o endereço do n8n gerado nos logs
 
