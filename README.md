@@ -63,11 +63,10 @@ Configure as seguintes credenciais no painel do n8n (N8N --> Credentials):
 
 **⚙️ Procedimento de Instalação (Render e Supabase)**
 
-1. **Variáveis de Ambiente:** Renomeie .env.example para .env e preencha as chaves. Copie estes valores para o painel de **Environment** do Render.
-
-2. **Scripts SQL:** No caso de uma nova conta do Supabase, execute o conteúdo da pasta /sql [LINK SCRIPTS](https://github.com/gciola/b2list-desafio-head/blob/main/sql/postgres_SQL_setup.sql) no SQL Editor do Supabase para criar as tabelas pharmacy, file_logs e as funções RPC de upsert em lote e truncate.
-
-3. **Segurança: Autorizar scripts em shell** Certifique-se de que N8N\_BLOCK\_SVC\_COMMAND\_EXECUTION=false e N8N\_DISABLE\_PRODUCTION\_MAIN\_PROCESS\_CONTROL=true estão configurados nas Variáveis de Ambiente para evitar travamentos na interface.
+1. **Dockerfile e docker-compose.yml:** Utilize o dockerfile e o docker-compose contidos no repositório para a preparação do ambiente em uma conta Render ou outra similar/interna.
+2. **Variáveis de Ambiente:** Renomeie .env.example para .env e preencha as chaves. Copie estes valores para o painel de **Environment** do Render.
+3. **Scripts SQL:** No caso de uma nova conta do Supabase, execute o conteúdo da pasta /sql [LINK SCRIPTS](https://github.com/gciola/b2list-desafio-head/blob/main/sql/postgres_SQL_setup.sql) no SQL Editor do Supabase para criar as tabelas pharmacy, file_logs e as funções RPC de upsert em lote e truncate.
+4. **Segurança: Autorizar scripts em shell** Certifique-se de que N8N\_BLOCK\_SVC\_COMMAND\_EXECUTION=false e N8N\_DISABLE\_PRODUCTION\_MAIN\_PROCESS\_CONTROL=true estão configurados nas Variáveis de Ambiente para evitar travamentos na interface.
 
 ## ---
 
