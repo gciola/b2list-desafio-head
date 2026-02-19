@@ -4,20 +4,20 @@
     {
       "parameters": {
         "bucketName": "b2list",
-        "fileKey": "={{ $json.filename }}"
+        "fileKey": "={{ $('When Executed by Another Workflow').item.json.filename }}"
       },
       "type": "n8n-nodes-base.s3",
       "typeVersion": 1,
       "position": [
-        -144,
+        -736,
         272
       ],
-      "id": "0e44187b-3fce-4e87-b46c-4e65116c1de1",
+      "id": "a239a138-a533-4fac-bf5d-70d3067a0b61",
       "name": "Download a file",
       "credentials": {
         "s3": {
-          "id": "AqYjsOYqqiU8SpRT",
-          "name": "Supabase \"S3 compatible\" Storage"
+          "id": "MK0rUmicpeDSKjls",
+          "name": "Supabase \"S3 Compatible\" Storage"
         }
       }
     },
@@ -30,10 +30,10 @@
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1.1,
       "position": [
-        80,
+        -512,
         272
       ],
-      "id": "564926f8-0736-47fb-88b2-b64cf5f927fc",
+      "id": "29006a5e-7ffd-4814-b007-5e795222ea17",
       "name": "Extract from File"
     },
     {
@@ -45,15 +45,15 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        80,
+        -512,
         464
       ],
-      "id": "1e13688d-dc72-4f9c-b36c-bf1a3389a3f8",
+      "id": "22e83d52-1755-4dc1-a449-aebe14d6da6f",
       "name": "Get many rows",
       "alwaysOutputData": true,
       "credentials": {
         "supabaseApi": {
-          "id": "byfRckrVCQipQVr5",
+          "id": "3VNnVVtKImOr6fER",
           "name": "Supabase account"
         }
       }
@@ -74,10 +74,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        304,
+        -288,
         368
       ],
-      "id": "ea7be19c-7388-4cd5-a299-8b3b070ff39d",
+      "id": "ac4608c0-c846-425f-974a-938b3229d7a9",
       "name": "Merge"
     },
     {
@@ -166,10 +166,10 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        528,
+        -64,
         352
       ],
-      "id": "31d71f81-ae7e-467f-b106-d8f7b1a33970",
+      "id": "c0ec51b5-e5df-4f90-915f-4ef45b20e802",
       "name": "Switch"
     },
     {
@@ -177,12 +177,6 @@
         "assignments": {
           "assignments": [
             {
-              "id": "20866d51-d7d8-409b-b9ed-d3529cf64379",
-              "name": "id",
-              "value": "={{ $json.id_2 }}",
-              "type": "number"
-            },
-            {
               "id": "8af88572-e198-4e7f-b360-569689985558",
               "name": "code_pharmacy",
               "value": "={{ $json.code_pharmacy_1 }}",
@@ -237,75 +231,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        752,
-        -112
+        528,
+        528
       ],
-      "id": "003d64dc-af4b-4980-92bd-5e2f139e8d4f",
-      "name": "Prepare Payload UPDATE"
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "8af88572-e198-4e7f-b360-569689985558",
-              "name": "code_pharmacy",
-              "value": "={{ $json.code_pharmacy_1 }}",
-              "type": "string"
-            },
-            {
-              "id": "83965c21-0380-4d39-9e68-6484ab79cfac",
-              "name": "nit",
-              "value": "={{ $json.nit_1 }}",
-              "type": "string"
-            },
-            {
-              "id": "025cda14-0da1-46ba-936d-a66bc9bb4c48",
-              "name": "trade_name",
-              "value": "={{ $json.trade_name_1 }}",
-              "type": "string"
-            },
-            {
-              "id": "b604e893-15e9-4261-a8b4-18aa24535cd8",
-              "name": "corporate_name",
-              "value": "={{ $json.corporate_name_1 }}",
-              "type": "string"
-            },
-            {
-              "id": "2649ec66-6c5b-4087-b789-606c6365be44",
-              "name": "lat",
-              "value": "={{ $json.lat_1.replaceAll(\",\",\".\") }}",
-              "type": "string"
-            },
-            {
-              "id": "c4534ab7-84e5-4894-bcc8-1bd37ab69f18",
-              "name": "lon",
-              "value": "={{ $json.lon_1.replaceAll(\",\",\".\") }}",
-              "type": "string"
-            },
-            {
-              "id": "1f6a8f23-36ca-4b21-b184-a6a84d82b48b",
-              "name": "category",
-              "value": "={{ $json.category_1 }}",
-              "type": "string"
-            },
-            {
-              "id": "625d07ca-3303-4443-a215-4e47558a57cf",
-              "name": "enabled",
-              "value": "={{ $json.enabled_1 }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        752,
-        368
-      ],
-      "id": "dbc4bb5d-9b7f-44f3-93e5-703ef8b66a26",
+      "id": "7fe207e6-0618-4bcf-83d4-82c50d537b84",
       "name": "Prepare Payload INSERT"
     },
     {
@@ -317,10 +246,10 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        1216,
-        336
+        720,
+        528
       ],
-      "id": "671d41df-f577-4346-89ed-6071b7536340",
+      "id": "8583ef0d-3c50-4af2-bd67-eefd2b98bae1",
       "name": "Aggregate in 500 batches - INSERT"
     },
     {
@@ -331,10 +260,10 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        992,
-        176
+        256,
+        368
       ],
-      "id": "739ecc45-e696-400b-ada2-78ec4bb19bc7",
+      "id": "980d05f5-88d3-44d4-b1cf-97bdf38f6d46",
       "name": "Loop on 500 Batch - INSERT"
     },
     {
@@ -345,10 +274,10 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1008,
-        -288
+        256,
+        0
       ],
-      "id": "9c593b7e-90af-45ae-afa6-28c8465a8543",
+      "id": "59494e43-82e2-4c7c-8d7d-5d32df271fb9",
       "name": "Loop on 500 Batch - UPDATE"
     },
     {
@@ -360,16 +289,16 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        1216,
-        -144
+        704,
+        128
       ],
-      "id": "2e3d3b37-61bf-4484-8353-1f21642942a7",
+      "id": "5045547f-8f85-4727-af22-435d99bdda0b",
       "name": "Aggregate in 500 batches - UPDATE"
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "https://wwvhaxdtnqdayxmbxrjq.supabase.co/rest/v1/pharmacy",
+        "url": "={{$('Get SUPABASE_URL').item.json.url}}/rest/v1/pharmacy",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
         "sendHeaders": true,
@@ -393,15 +322,15 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1424,
-        336
+        928,
+        528
       ],
-      "id": "4bf70581-644c-4a15-aefc-348c86e0301b",
+      "id": "e249b76e-aced-4346-9afb-bf0cb6045872",
       "name": "Insert into pharmacy",
       "executeOnce": false,
       "credentials": {
         "supabaseApi": {
-          "id": "byfRckrVCQipQVr5",
+          "id": "3VNnVVtKImOr6fER",
           "name": "Supabase account"
         }
       }
@@ -441,16 +370,16 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        752,
-        848
+        512,
+        912
       ],
-      "id": "300ac6cc-0c17-4eab-8ad6-1bfa35f3520f",
+      "id": "860b8f7e-ad29-4036-b186-cb1de595fce3",
       "name": "Prepare Payload SOFT DELETE"
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "https://wwvhaxdtnqdayxmbxrjq.supabase.co/rest/v1/rpc/update_pharmacy_batch",
+        "url": "={{$('Get SUPABASE_URL').item.json.url}}/rest/v1/rpc/update_pharmacy_batch",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
         "sendBody": true,
@@ -461,14 +390,14 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        1424,
-        816
+        912,
+        912
       ],
-      "id": "32288df8-e4b0-4d6a-9bc7-dc1752f78701",
+      "id": "c93c02a8-0b02-4792-b3f5-5340ca7fe7d2",
       "name": "Soft Delete Matching Codes",
       "credentials": {
         "supabaseApi": {
-          "id": "byfRckrVCQipQVr5",
+          "id": "3VNnVVtKImOr6fER",
           "name": "Supabase account"
         }
       }
@@ -476,7 +405,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://wwvhaxdtnqdayxmbxrjq.supabase.co/rest/v1/rpc/update_pharmacy_batch",
+        "url": "={{$('Get SUPABASE_URL').item.json.url}}/rest/v1/rpc/update_pharmacy_batch",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
         "sendBody": true,
@@ -487,14 +416,14 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        1424,
-        -144
+        912,
+        128
       ],
-      "id": "a03b788a-19bb-402f-ae92-60f6328b1d92",
+      "id": "10cb5b69-5ab3-4051-ad9a-51098fc9ae57",
       "name": "Update Matching Codes",
       "credentials": {
         "supabaseApi": {
-          "id": "byfRckrVCQipQVr5",
+          "id": "3VNnVVtKImOr6fER",
           "name": "Supabase account"
         }
       }
@@ -508,10 +437,10 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        1200,
-        816
+        704,
+        912
       ],
-      "id": "adcd4d54-ddcb-4072-bfc3-093af75a4b20",
+      "id": "b6f4952f-28de-445a-ab0e-320417be72db",
       "name": "Aggregate in 500 batches - SOFT DELETE"
     },
     {
@@ -522,10 +451,10 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        992,
-        656
+        256,
+        752
       ],
-      "id": "fb6fe17c-4d07-41f2-bdad-64cad580a998",
+      "id": "03205554-d1b6-43e7-9f6c-26d63581fc51",
       "name": "Loop on 500 Batch - SOFT DELETE"
     },
     {
@@ -541,11 +470,110 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -368,
-        368
+        -1120,
+        384
       ],
-      "id": "8a678bdc-bd2f-4c22-8018-82e4b5b71a2e",
+      "id": "86916e97-9f91-4967-a66d-2f6fce308702",
       "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "20866d51-d7d8-409b-b9ed-d3529cf64379",
+              "name": "id",
+              "value": "={{ $json.id_2 }}",
+              "type": "number"
+            },
+            {
+              "id": "8af88572-e198-4e7f-b360-569689985558",
+              "name": "code_pharmacy",
+              "value": "={{ $json.code_pharmacy_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "83965c21-0380-4d39-9e68-6484ab79cfac",
+              "name": "nit",
+              "value": "={{ $json.nit_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "025cda14-0da1-46ba-936d-a66bc9bb4c48",
+              "name": "trade_name",
+              "value": "={{ $json.trade_name_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "b604e893-15e9-4261-a8b4-18aa24535cd8",
+              "name": "corporate_name",
+              "value": "={{ $json.corporate_name_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "2649ec66-6c5b-4087-b789-606c6365be44",
+              "name": "lat",
+              "value": "={{ $json.lat_1.replaceAll(\",\",\".\") }}",
+              "type": "string"
+            },
+            {
+              "id": "c4534ab7-84e5-4894-bcc8-1bd37ab69f18",
+              "name": "lon",
+              "value": "={{ $json.lon_1.replaceAll(\",\",\".\") }}",
+              "type": "string"
+            },
+            {
+              "id": "1f6a8f23-36ca-4b21-b184-a6a84d82b48b",
+              "name": "category",
+              "value": "={{ $json.category_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "625d07ca-3303-4443-a215-4e47558a57cf",
+              "name": "enabled",
+              "value": "={{ $json.enabled_1 }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        128
+      ],
+      "id": "7eb59bc0-adec-459c-804e-334e159d0a43",
+      "name": "Prepare Payload UPDATE"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "XDkFioc7AkF5aCpL",
+          "mode": "list",
+          "cachedResultName": "SUPABASE_URL",
+          "cachedResultUrl": "/projects/tbSf5XjXi7rHgQLr/datatables/XDkFioc7AkF5aCpL"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "1"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -928,
+        384
+      ],
+      "id": "75b2748f-e9d0-4412-8a83-8cc84a6f1ba0",
+      "name": "Get SUPABASE_URL"
     }
   ],
   "pinData": {
@@ -606,32 +634,21 @@
       "main": [
         [
           {
-            "node": "Prepare Payload UPDATE",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Prepare Payload INSERT",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Prepare Payload SOFT DELETE",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Prepare Payload UPDATE": {
-      "main": [
-        [
-          {
             "node": "Loop on 500 Batch - UPDATE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop on 500 Batch - INSERT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop on 500 Batch - SOFT DELETE",
             "type": "main",
             "index": 0
           }
@@ -642,7 +659,7 @@
       "main": [
         [
           {
-            "node": "Loop on 500 Batch - INSERT",
+            "node": "Aggregate in 500 batches - INSERT",
             "type": "main",
             "index": 0
           }
@@ -665,7 +682,7 @@
         [],
         [
           {
-            "node": "Aggregate in 500 batches - INSERT",
+            "node": "Prepare Payload INSERT",
             "type": "main",
             "index": 0
           }
@@ -677,7 +694,7 @@
         [],
         [
           {
-            "node": "Aggregate in 500 batches - UPDATE",
+            "node": "Prepare Payload UPDATE",
             "type": "main",
             "index": 0
           }
@@ -710,7 +727,7 @@
       "main": [
         [
           {
-            "node": "Loop on 500 Batch - SOFT DELETE",
+            "node": "Aggregate in 500 batches - SOFT DELETE",
             "type": "main",
             "index": 0
           }
@@ -755,7 +772,7 @@
         [],
         [
           {
-            "node": "Aggregate in 500 batches - SOFT DELETE",
+            "node": "Prepare Payload SOFT DELETE",
             "type": "main",
             "index": 0
           }
@@ -763,6 +780,28 @@
       ]
     },
     "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get SUPABASE_URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Payload UPDATE": {
+      "main": [
+        [
+          {
+            "node": "Aggregate in 500 batches - UPDATE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get SUPABASE_URL": {
       "main": [
         [
           {
@@ -783,16 +822,13 @@
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
-    "availableInMCP": false,
-    "timeSavedMode": "fixed",
-    "timezone": "America/Sao_Paulo",
-    "callerPolicy": "workflowsFromSameOwner"
+    "availableInMCP": false
   },
-  "versionId": "710ec1e1-52b7-445f-9e72-3f6992f1e402",
+  "versionId": "b175f614-d1a2-4f3c-bdb1-1edbf72f2779",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "5dc44038a9eee860431a1f6cde80c3385ec8a2aedcb13a33f6aed62dc4a43533"
+    "instanceId": "aea54f57425e6d92d2e95613d2b73e95667c01c9f4696c97746b20222b916e1c"
   },
-  "id": "Iz8UZGCxY6Ycd4qD",
+  "id": "8AILVeOFoQFOKPXB",
   "tags": []
 }

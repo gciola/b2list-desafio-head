@@ -10,10 +10,10 @@
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1.1,
       "position": [
-        80,
-        -80
+        320,
+        -128
       ],
-      "id": "69f56e04-2e16-408e-b9f1-4ef57590bd9e",
+      "id": "7c153ce1-7f22-48c4-95e2-12127c05d6a4",
       "name": "Extract from File"
     },
     {
@@ -23,10 +23,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        304,
-        16
+        544,
+        -32
       ],
-      "id": "7f28be49-b315-485d-b3b7-f05aec9e574a",
+      "id": "169e248c-3abe-4aec-8d85-e39e83e4e400",
       "name": "Merge"
     },
     {
@@ -88,10 +88,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        576,
-        16
+        1008,
+        48
       ],
-      "id": "6f1c4e28-fd59-46a3-871e-505abe58f8bc",
+      "id": "af19ed3d-1ae4-4f32-bb2f-3d36a9adfb07",
       "name": "Prepare Payload INSERT"
     },
     {
@@ -103,10 +103,10 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        1088,
-        128
+        1232,
+        48
       ],
-      "id": "fec84f51-7bdf-4022-856f-879cc3772bec",
+      "id": "e00d4010-a225-42fa-ae7c-515f66ac5646",
       "name": "Aggregate in 500 batches - INSERT"
     },
     {
@@ -117,16 +117,16 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        880,
-        16
+        784,
+        -32
       ],
-      "id": "c2ecc83d-b77a-436a-be05-564101090535",
+      "id": "91ba4d3e-8f3e-4bef-9be0-ee8473ca144d",
       "name": "Loop on 500 Batch - INSERT"
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "https://wwvhaxdtnqdayxmbxrjq.supabase.co/rest/v1/pharmacy",
+        "url": "={{$('Get SUPABASE_URL').item.json.url}}/rest/v1/pharmacy",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
         "sendHeaders": true,
@@ -150,15 +150,15 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1280,
-        128
+        1456,
+        48
       ],
-      "id": "783c1cc8-5775-41af-bdb8-e4990bd9f045",
+      "id": "d29aeddc-060c-4c47-9022-11179e73af71",
       "name": "Insert into pharmacy",
       "executeOnce": false,
       "credentials": {
         "supabaseApi": {
-          "id": "byfRckrVCQipQVr5",
+          "id": "3VNnVVtKImOr6fER",
           "name": "Supabase account"
         }
       }
@@ -166,9 +166,18 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://wwvhaxdtnqdayxmbxrjq.supabase.co/rest/v1/rpc/truncate_table_by_name",
+        "url": "={{$('Get SUPABASE_URL').item.json.url}}/rest/v1/rpc/truncate_table_by_name",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"table_name\": \"pharmacy\"\n}",
@@ -177,14 +186,14 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        -16,
-        160
+        320,
+        64
       ],
-      "id": "8fab9263-2d3c-46ab-a241-22b648356832",
+      "id": "06b11d8a-cfb4-4ec7-ba27-1c1b032f0c69",
       "name": "Truncate Pharmacy table",
       "credentials": {
         "supabaseApi": {
-          "id": "byfRckrVCQipQVr5",
+          "id": "3VNnVVtKImOr6fER",
           "name": "Supabase account"
         }
       }
@@ -197,15 +206,15 @@
       "type": "n8n-nodes-base.s3",
       "typeVersion": 1,
       "position": [
-        -144,
-        -80
+        96,
+        -128
       ],
-      "id": "dcd03311-f2ca-41a7-b96b-7fb40c68c194",
+      "id": "ba407232-ac8f-436a-b9e9-925f9e5f5fea",
       "name": "Download Pharmacy.csv from S3",
       "credentials": {
         "s3": {
-          "id": "AqYjsOYqqiU8SpRT",
-          "name": "Supabase \"S3 compatible\" Storage"
+          "id": "MK0rUmicpeDSKjls",
+          "name": "Supabase \"S3 Compatible\" Storage"
         }
       }
     },
@@ -214,11 +223,39 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -432,
-        16
+        -352,
+        -32
       ],
-      "id": "7338cd75-1010-4c87-93b7-858c78a5fff3",
+      "id": "f8163df9-7c53-4db9-bc86-fc8b8e16e067",
       "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "XDkFioc7AkF5aCpL",
+          "mode": "list",
+          "cachedResultName": "SUPABASE_URL",
+          "cachedResultUrl": "/projects/tbSf5XjXi7rHgQLr/datatables/XDkFioc7AkF5aCpL"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "1"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -128,
+        -32
+      ],
+      "id": "b434bf41-fe34-4443-ace9-938010c6f4ca",
+      "name": "Get SUPABASE_URL"
     }
   ],
   "pinData": {},
@@ -238,7 +275,7 @@
       "main": [
         [
           {
-            "node": "Prepare Payload INSERT",
+            "node": "Loop on 500 Batch - INSERT",
             "type": "main",
             "index": 0
           }
@@ -249,7 +286,7 @@
       "main": [
         [
           {
-            "node": "Loop on 500 Batch - INSERT",
+            "node": "Aggregate in 500 batches - INSERT",
             "type": "main",
             "index": 0
           }
@@ -272,7 +309,7 @@
         [],
         [
           {
-            "node": "Aggregate in 500 batches - INSERT",
+            "node": "Prepare Payload INSERT",
             "type": "main",
             "index": 0
           }
@@ -316,12 +353,23 @@
       "main": [
         [
           {
-            "node": "Download Pharmacy.csv from S3",
+            "node": "Get SUPABASE_URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get SUPABASE_URL": {
+      "main": [
+        [
+          {
+            "node": "Truncate Pharmacy table",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Truncate Pharmacy table",
+            "node": "Download Pharmacy.csv from S3",
             "type": "main",
             "index": 0
           }
@@ -333,16 +381,13 @@
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
-    "availableInMCP": false,
-    "timeSavedMode": "fixed",
-    "timezone": "America/Sao_Paulo",
-    "callerPolicy": "workflowsFromSameOwner"
+    "availableInMCP": false
   },
-  "versionId": "a8f1ed62-1e44-4a90-a492-c45bbed63b7e",
+  "versionId": "232b4284-3265-4461-bce3-4c18b1350525",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "5dc44038a9eee860431a1f6cde80c3385ec8a2aedcb13a33f6aed62dc4a43533"
+    "instanceId": "aea54f57425e6d92d2e95613d2b73e95667c01c9f4696c97746b20222b916e1c"
   },
-  "id": "YjCsCuWZDbBsTDwv",
+  "id": "WVP8CUGD0T2UFdxB",
   "tags": []
 }
