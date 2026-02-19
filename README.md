@@ -73,7 +73,7 @@ Configure as seguintes credenciais no painel do n8n (N8N --> Credentials):
 
 ## ---
 
-**🔄 Fluxos a Adicionar**
+**🔄 Fluxos a Adicionar no n8n**
 
 Os JSONs do N8N para importação estão na pasta /n8n\_data:
 
